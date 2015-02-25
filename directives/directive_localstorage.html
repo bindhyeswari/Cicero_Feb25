@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="../base.css"/>
+</head>
+<body>
+    <div ng-controller="MyController">
+        {{ message }}
+    </div>
+    <form localstorage>
+        <input type="text" name="name" placeholder="name"/>
+        <input type="text" name="street" placeholder="street"/>
+        <input type="text" name="city" placeholder="city"/>
+        <input type="text" name="zip" placeholder="zip"/>
+    </form>
+    <script src="../bower_components/angular/angular.js"></script>
+    <script>
+        angular.module('myApp', []).controller('MyController', function ($scope) {
+            $scope.message = 'Hello World!';
+        }).directive('localstorage', function () {
+            // return the DDO
+            return {
+                restrict: 'A',
+                link: function (scope, element, attrs) {
+                    element = element[0];
+                    for (var i = 0, len = element.children.length; i < len; i++) {
+                        var inp = element.children[i];
+
+                        // load the initial values
+                        inp.value = localStorage.getItem(inp.name) || '';
+
+                        // add event listener for the data
+                        inp.addEventListener('change', function () {
+                            localStorage.setItem(this.getAttribute('name'), this.value);
+                            console.log(localStorage);
+                        });
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

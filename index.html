@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var scope = {
+                x: 10,
+                y: 200
+            };
+
+            Object.observe(scope, function(changes) {
+                for (var j = 0, lenj = changes.length; j < lenj; j++) {
+                    var change = changes[j];
+                    console.log(change.name);
+                    var elems = document.querySelectorAll('[data-model="' + change.name + '"]');
+                    console.log(elems);
+                    for (var i = 0, len = elems.length; i < len; i++) {
+                        elems[i].value = change.object[change.name];
+                    }
+                }
+            });
+
+            scope.x = 100;
+            scope.y = 10000;
+
+            // todo: Write a function to update the scope object based on the data-model attributes
+            var elems = document.querySelectorAll('[data-model]');
+            for (var i = 0, len = elems.length; i < len; i++) {
+                elems[i].addEventListener('change', function (event) {
+                    console.log(this.dataset.model);
+                    scope[this.dataset.model] = this.value;
+                });
+            }
+        });
+
+    </script>
+</head>
+<body>
+    <input type="text" data-model="x"/>
+
+    <input type="text" data-model="y"/>
+
+    <input type="text" data-model="x"/>
+</body>
+</html>

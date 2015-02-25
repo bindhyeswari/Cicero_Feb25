@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        function Resolver() {
+
+        }
+
+        Resolver.dependencies = {};
+
+        Resolver.register = function(fn) {
+            // This static method takes a function and registers it as a dependency
+            // todo: Modify this to take any object / function and convert it to a singleton + store it using a closure
+            Resolver.dependencies[fn.name] = fn;
+        };
+
+        Resolver.resolve = function (fn) {
+            // write code to execute generic by extracting the dependencies
+            // from the function signature and apply them onto the function
+            // as parameters
+
+            var fn_params = /\s*function\s*[a-zA-Z0-9$_]*\(([^)]*)\)/.exec(fn.toString())[1].split(',').map(function (inp) {
+                return inp.trim();
+            });
+
+            console.log(fn_params);
+
+            var args = Array.prototype.slice.call(arguments, 1);
+            console.log(args);
+
+            fn_params = fn_params.map(function (param) {
+                return Resolver.dependencies[param] || args.shift();
+            });
+
+            console.log(fn_params);
+
+            fn.apply(null, fn_params);
+
+        };
+
+        function generic(add, y, multiply, z) {
+            console.log(multiply(y, z) + add(1,2));
+        }
+
+
+        // test cases:
+        Resolver.register(function add(x, y) {
+            return x + y;
+        });
+        Resolver.register(function multiply(x, y) {
+            return x * y;
+        });
+        console.log(Resolver.dependencies);
+        Resolver.resolve(generic, 10, 100); // to print out 13
+
+
+    </script>
+</head>
+<body>
+
+</body>
+</html>
